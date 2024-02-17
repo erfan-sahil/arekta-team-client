@@ -61,7 +61,7 @@ const componentName = (props) => {
       apiRequest
         .post("/plans/fake", payload)
         .then((res) => {
-          console.log(res);
+          // console.log(res);
           setResult(res.data);
           const stringData = JSON.stringify(res.data)
           localStorage.setItem('userData',stringData)
@@ -70,7 +70,7 @@ const componentName = (props) => {
     }
   };
 
-  console.log("result", result);
+  // console.log("result", result);
   const handlePrevQuestion = () => {
     if (currentQuestionIndex < questionnaire.length - 1) {
       setCurrentQuestionIndex(currentQuestionIndex - 1);
@@ -79,7 +79,7 @@ const componentName = (props) => {
     }
   };
 
-  console.log(result);
+
   return (
     <div className="flex flex-col justify-center items-center bg-white py-20 px-40 ">
       {result.success === true ? (
@@ -164,7 +164,7 @@ const componentName = (props) => {
               <div>
                 {questionnaire[currentQuestionIndex].isMCQ ? (
                   <div className=" w-full">
-                    {console.log(questionnaire[currentQuestionIndex].options)}
+                    {/* {console.log(questionnaire[currentQuestionIndex].options)} */}
                     {questionnaire[currentQuestionIndex].options.map((q) => (
                       <ListItem className="p-0 flex flex-col">
                         <label

@@ -7,21 +7,30 @@ import {
   Typography,
   Button,
 } from "@material-tailwind/react";
+import { Exercise } from "./Exercise";
 
 const componentName = (props) => {
+
+
+  const userData = localStorage.getItem('userData');
+  const storaData = JSON.parse(userData)
+  console.log(userData)
+  console.log(storaData)
+
   return (
     <div>
       <div>
         <h1 className="text-4xl font-bold pb-4">Your plans for today,</h1>
         <h1 className="text-xl font-bold">Workout Plan</h1>
         <div className="flex items-center gap-4">
-          <Card className="mt-6 w-72 pt-10">
+        {storaData.payload.plan.plan.workout_plan.exercises.map(exer => <Exercise exer={exer}></Exercise>)}
+          {/* <Card className="mt-6 w-72 pt-10">
             <CardHeader color="blue-gray" className="relative h-44">
               <img src="img/planks.jpg" className="h-full" alt="card-image" />
             </CardHeader>
             <CardBody>
               <Typography variant="h5" color="blue-gray" className="mb-2">
-                Planks
+               
               </Typography>
               <Typography>
                 The place is close to Barceloneta Beach and bus stop just 2 min
@@ -62,7 +71,7 @@ const componentName = (props) => {
             <CardFooter className="pt-0">
               <Button>Start Now</Button>
             </CardFooter>
-          </Card>
+          </Card> */}
         </div>
 
         <div className="mt-12">
