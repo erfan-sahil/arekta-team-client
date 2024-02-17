@@ -1,19 +1,12 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Button, Input } from "@material-tailwind/react";
 import { Select, Option } from "@material-tailwind/react";
-import {
-  List,
-  ListItem,
-  ListItemPrefix,
-  Avatar,
-  Card,
-  Typography,
-} from "@material-tailwind/react";
+import { List, ListItem, ListItemPrefix, Avatar, Card, Typography } from "@material-tailwind/react";
 import apiRequest from "../utils/apiRequest";
 
 const componentName = (props) => {
   const [searchValue, setSearchValue] = useState("");
-  const [result, setResult] = useState("");
+  const [result, setResult] = useState([]);
 
   const handleChange = (event) => {
     setSearchValue(event.target.value);
@@ -25,14 +18,31 @@ const componentName = (props) => {
   console.log(searchValue);
 
   const searchHandler = () => {
+    const payload = {
+      msg: result,
+      question: searchValue,
+    };
+
     apiRequest
-      .post("/chats/create", searchValue)
+      .post("/chats/goggins", payload)
       .then((res) => {
-        setResult(res.data);
+        setResult(res.data.payload.msg);
       })
       .catch((error) => console.error(error));
   };
 
+  useEffect(() => {
+    const payload = {
+      msg: result,
+    };
+    apiRequest
+      .post("/chats/goggins", payload)
+      .then((res) => {
+        // console.log(res.data.payload.msg);
+        setResult(res.data.payload.msg);
+      })
+      .catch((error) => console.error(error));
+  }, []);
   console.log(result);
   return (
     <div className="h-full w-full p-10">
@@ -52,41 +62,37 @@ const componentName = (props) => {
       </div>
       <div className="flex justify-start items-center mt-20">
         <div>
-          <ListItem>
-            { result ? 
-            <div>
-            <Typography variant="h6" color="blue-gray">
-              Coach
-            </Typography>
-            <Typography variant="small" color="gray" className="font-normal">
-              {result}
-            </Typography>
-          </div>
-          :
-          <div></div>
+          {result.map((c) => {
+            if (c.role === "system") {
+              return <div></div>;
             }
 
-          </ListItem>
+            return (
+              <ListItem>
+                <div>
+                  <Typography variant="h6" color="blue-gray">
+                    {c.role === "assistant" ? "Coach" : "You"}
+                  </Typography>
+                  <Typography variant="small" color="gray" className="font-normal">
+                    {c.content}
+                  </Typography>
+                </div>
+              </ListItem>
+            );
+          })}
         </div>
       </div>
 
       <div className="flex justify-center mt-48">
         <form className="relative flex w-2/3" onSubmit={handleSubmit}>
-          <Input
-            type="text"
-            label="Search"
-            name="search"
-            value={searchValue}
-            onChange={handleChange}
-            className="pr-20"
-          />
+          <Input type="text" label="Search" name="search" value={searchValue} onChange={handleChange} className="pr-20" />
           <Button
             size="sm"
             className="absolute right-1 top-1 rounded bg-blue-gray-900 text-white"
             type="submit"
             onClick={searchHandler}
           >
-            Search
+            Submit
           </Button>
         </form>
       </div>
