@@ -1,20 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { Button, Input } from "@material-tailwind/react";
 import { Select, Option } from "@material-tailwind/react";
-import {
-  List,
-  ListItem,
-  ListItemPrefix,
-  Avatar,
-  Card,
-  Typography,
-} from "@material-tailwind/react";
+import { List, ListItem, ListItemPrefix, Avatar, Card, Typography, Spinner } from "@material-tailwind/react";
 import apiRequest from "../utils/apiRequest";
 
 const componentName = (props) => {
   const [searchValue, setSearchValue] = useState("");
   const [result, setResult] = useState([]);
   const [selectedPersonality, setSelectedPersonality] = useState("");
+  const [showSpinner, setShowSpinner] = useState(false);
 
   const handleChange = (event) => {
     setSearchValue(event?.target?.value);
@@ -30,10 +24,12 @@ const componentName = (props) => {
       msg: result,
       question: searchValue,
     };
-
+    setShowSpinner(true);
+    setSearchValue("");
     apiRequest
       .post("/chats/goggins", payload)
       .then((res) => {
+        setShowSpinner(false);
         setResult(res.data.payload.msg);
       })
       .catch((error) => console.error(error));
@@ -53,7 +49,7 @@ const componentName = (props) => {
   }, []);
 
   const HandleSelectChange = (event) => {
-      setSelectedPersonality(event.target.value)
+    setSelectedPersonality(event.target.value);
   };
 
   console.log(selectedPersonality);
@@ -66,11 +62,7 @@ const componentName = (props) => {
         <div>
           <p className="font-semibold text-lg my-2">Personality</p>
           <div className="flex items-center gap-4">
-            <Select
-              label="Select Personality"
-              onChange={ HandleSelectChange}
-              value={selectedPersonality}
-            >
+            <Select label="Select Personality" onChange={HandleSelectChange} value={selectedPersonality}>
               <Option name="David Goggins" value="David Goggins">
                 David Goggins
               </Option>
@@ -94,11 +86,7 @@ const componentName = (props) => {
                   <Typography variant="h6" color="blue-gray">
                     {c.role === "assistant" ? "Coach" : "You"}
                   </Typography>
-                  <Typography
-                    variant="small"
-                    color="gray"
-                    className="font-normal"
-                  >
+                  <Typography variant="small" color="gray" className="font-normal">
                     {c.content}
                   </Typography>
                 </div>
@@ -107,17 +95,17 @@ const componentName = (props) => {
           })}
         </div>
       </div>
+      {showSpinner == true ? (
+        <div className="ml-4 text-center">
+          <Spinner />
+        </div>
+      ) : (
+        ""
+      )}
 
       <div className="flex justify-center mt-48">
         <form className="relative flex w-2/3" onSubmit={handleSubmit}>
-          <Input
-            type="text"
-            label="Search"
-            name="search"
-            value={searchValue}
-            onChange={handleChange}
-            className="pr-20"
-          />
+          <Input type="text" label="Chat" name="search" value={searchValue} onChange={handleChange} className="pr-20" />
           <Button
             size="sm"
             className="absolute right-1 top-1 rounded bg-blue-gray-900 text-white"
