@@ -1,15 +1,23 @@
 import React, { useEffect, useState } from "react";
 import { Button, Input } from "@material-tailwind/react";
 import { Select, Option } from "@material-tailwind/react";
-import { List, ListItem, ListItemPrefix, Avatar, Card, Typography } from "@material-tailwind/react";
+import {
+  List,
+  ListItem,
+  ListItemPrefix,
+  Avatar,
+  Card,
+  Typography,
+} from "@material-tailwind/react";
 import apiRequest from "../utils/apiRequest";
 
 const componentName = (props) => {
   const [searchValue, setSearchValue] = useState("");
   const [result, setResult] = useState([]);
+  const [selectedPersonality, setSelectedPersonality] = useState("");
 
   const handleChange = (event) => {
-    setSearchValue(event.target.value);
+    setSearchValue(event?.target?.value);
   };
 
   const handleSubmit = (event) => {
@@ -35,15 +43,20 @@ const componentName = (props) => {
     const payload = {
       msg: result,
     };
+
     apiRequest
       .post("/chats/goggins", payload)
       .then((res) => {
-        // console.log(res.data.payload.msg);
         setResult(res.data.payload.msg);
       })
       .catch((error) => console.error(error));
   }, []);
-  console.log(result);
+
+  const HandleSelectChange = (event) => {
+      setSelectedPersonality(event.target.value)
+  };
+
+  console.log(selectedPersonality);
   return (
     <div className="h-full w-full p-10">
       <div className="flex justify-between w-full items-center">
@@ -53,9 +66,17 @@ const componentName = (props) => {
         <div>
           <p className="font-semibold text-lg my-2">Personality</p>
           <div className="flex items-center gap-4">
-            <Select label="Select Personality">
-              <Option>David Goggins</Option>
-              <Option>Calm</Option>
+            <Select
+              label="Select Personality"
+              onChange={ HandleSelectChange}
+              value={selectedPersonality}
+            >
+              <Option name="David Goggins" value="David Goggins">
+                David Goggins
+              </Option>
+              <Option name="Calm" value="Calm">
+                Calm
+              </Option>
             </Select>
           </div>
         </div>
@@ -73,7 +94,11 @@ const componentName = (props) => {
                   <Typography variant="h6" color="blue-gray">
                     {c.role === "assistant" ? "Coach" : "You"}
                   </Typography>
-                  <Typography variant="small" color="gray" className="font-normal">
+                  <Typography
+                    variant="small"
+                    color="gray"
+                    className="font-normal"
+                  >
                     {c.content}
                   </Typography>
                 </div>
@@ -85,7 +110,14 @@ const componentName = (props) => {
 
       <div className="flex justify-center mt-48">
         <form className="relative flex w-2/3" onSubmit={handleSubmit}>
-          <Input type="text" label="Search" name="search" value={searchValue} onChange={handleChange} className="pr-20" />
+          <Input
+            type="text"
+            label="Search"
+            name="search"
+            value={searchValue}
+            onChange={handleChange}
+            className="pr-20"
+          />
           <Button
             size="sm"
             className="absolute right-1 top-1 rounded bg-blue-gray-900 text-white"
